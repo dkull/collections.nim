@@ -143,7 +143,7 @@ macro interfaceMethods*(nameExpr: untyped, body: untyped): untyped =
 
     # Generate functions in vtable type
     let vtableArgs = newNimNode(nnkFormalParams).add(ret)
-    vtableArgs.add(newNimNode(nnkIdentDefs).add(newIdentNode(!"self"), newIdentNode(!"RootRef"), newEmptyNode()))
+    vtableArgs.add(newNimNode(nnkIdentDefs).add(newIdentNode("self"), newIdentNode("RootRef"), newEmptyNode()))
     for arg in args:
       vtableArgs.add(newNimNode(nnkIdentDefs).add(arg[0], arg[1], newEmptyNode()))
 

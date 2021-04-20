@@ -20,7 +20,8 @@ proc setAt*(s: var string, at: int, data: string) =
   doAssert(s.len >= data.len + at)
   copyMem(cast[pointer](cast[int](addr s[0]) + at), data.cstring, data.len)
 
-proc convertEndian(size: static[int], dst: pointer, src: pointer, endian=bigEndian) {.inline.} =
+proc convertEndian(size: static[int], dst: pointer, src: pointer,
+    endian = bigEndian) {.inline.} =
   when size == 1:
     copyMem(dst, src, 1)
   else:
@@ -44,12 +45,13 @@ proc convertEndian(size: static[int], dst: pointer, src: pointer, endian=bigEndi
       else:
         {.error: "Unsupported size".}
 
-proc pack*[T](v: T, endian: Endianness=littleEndian): string {.inline.} =
+proc pack*[T](v: T, endian: Endianness = littleEndian): string {.inline.} =
   ## Converts scalar `v` into a binary string with a specific endianness.
   result = newString(sizeof(v))
-  convertEndian(sizeof(T), addr result[0], unsafeAddr v, endian=endian)
+  convertEndian(sizeof(T), addr result[0], unsafeAddr v, endian = endian)
 
-proc unpack*[T](v: string|Buffer, t: typedesc[T], endian: Endianness=littleEndian): T {.inline.} =
+proc unpack*[T](v: string|Buffer, t: typedesc[T],
+    endian: Endianness = littleEndian): T {.inline.} =
   ## Converts binary string to scalar type `t` with a specific endianness.
   if v.len < sizeof(T):
     raise newException(ValueError, "buffer too small")
@@ -68,7 +70,8 @@ proc unpackStruct*[T](v: string, t: typedesc[T]): T {.inline.} =
 
 # HEX
 
-const hexLetters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f']
+const hexLetters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b',
+    'c', 'd', 'e', 'f']
 
 proc encodeHex*(s: string): string =
   result = ""
@@ -94,7 +97,8 @@ proc decodeHex*(s: string): string =
 # Base64
 
 proc urlsafeBase64Encode*(s: string): string =
-  return base64.encode(s, newline="").replace('+', '-').replace('/', '_').strip(chars={'='})
+  return base64.encode(s, safe = true).replace('+', '-').replace('/',
+      '_').strip(chars = {'='})
 
 proc urlsafeBase64Decode*(s: string): string =
   var d = s.replace('-', '+').replace('_', '/')
